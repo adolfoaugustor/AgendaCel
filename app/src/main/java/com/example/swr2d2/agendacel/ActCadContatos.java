@@ -1,19 +1,25 @@
 package com.example.swr2d2.agendacel;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.GpsStatus;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.*;
 
 import com.example.swr2d2.agendacel.database.DataBase;
 import com.example.swr2d2.agendacel.dominio.Entidades.Contato;
 import com.example.swr2d2.agendacel.dominio.RepositorioContato;
 
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ActCadContatos extends AppCompatActivity {
@@ -43,7 +49,7 @@ public class ActCadContatos extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_cad_contatos2);
+        setContentView(R.layout.act_cad_contatos);
 
         edtNome = (EditText) findViewById(R.id.edtNome);
         edtEmail = (EditText) findViewById(R.id.edtEmail);
@@ -55,7 +61,7 @@ public class ActCadContatos extends AppCompatActivity {
         spnTipoEmail = (Spinner) findViewById(R.id.spnTipoEmail);
         spnTipoTelefone = (Spinner) findViewById(R.id.spnTipoTelefone);
         spnTipoEndereco = (Spinner) findViewById(R.id.spnTipoEndereco);
-        spnTipoDatasEspeciais = (Spinner) findViewById(R.id.spnTipoDataEspeciais);
+        spnTipoDatasEspeciais = (Spinner) findViewById(R.id.spnTipoDatasEspeciais);
 
         adpTipoEmail = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
         adpTipoEmail.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -94,6 +100,12 @@ public class ActCadContatos extends AppCompatActivity {
         adpTipoDatasEspeciais.add("Aniversario");
         adpTipoDatasEspeciais.add("Data Comemorativa");
         adpTipoDatasEspeciais.add("Outros");
+
+        ExibeDataListener listener = new ExibeDataListener();
+
+        edtDatasEspeciais.setOnClickListener( listener );
+        edtDatasEspeciais.setOnFocusChangeListener( listener );
+        contato = new Contato();
 
         try{
             dataBase = new DataBase(this);
@@ -138,8 +150,8 @@ public class ActCadContatos extends AppCompatActivity {
     private void inserir() {
 
         try {
-            Date date = new Date();
-            contato = new Contato();
+
+
 
             contato.setNome(edtNome.getText().toString());
             contato.setTelefone(edtTelefone.getText().toString());
@@ -147,12 +159,13 @@ public class ActCadContatos extends AppCompatActivity {
             contato.setEndereco(edtEndereco.getText().toString());
 
             contato.setGrupo(edtGrupos.getText().toString());
-            contato.setDataEspecial(date);
 
-            contato.setTipoTelefone("");
-            contato.setTipoEmail("");
-            contato.setTipoEndereco("");
-            contato.setTipoDataEspecial("");
+
+            contato.setTipoTelefone(String.valueOf(spnTipoTelefone.getSelectedItemPosition()) );
+            contato.setTipoEmail(String.valueOf(spnTipoEmail.getSelectedItemPosition()) );
+            contato.setTipoEndereco(String.valueOf(spnTipoEndereco.getSelectedItemPosition()) );
+            contato.setTipoDataEspecial(String.valueOf(spnTipoDatasEspeciais.getSelectedItemPosition()) );
+
             repositorioContato.inserir(contato);
 
         } catch (Exception ex) {
@@ -164,4 +177,59 @@ public class ActCadContatos extends AppCompatActivity {
 
         }
     }
+    private void exibeData(){
+        Calendar calendar = Calendar.getInstance();
+        int ano = calendar.get(calendar.YEAR);
+        int mes = calendar.get(calendar.MONTH);
+        int dia = calendar.get(calendar.DAY_OF_MONTH);
+
+        DatePickerDialog dlg = new DatePickerDialog(this, new SelecionaDataListener(), ano, mes, dia);
+        dlg.show();
+    }
+
+    public class ExibeDataListener implements View.OnClickListener, View.OnFocusChangeListener
+    {
+
+        @Override
+        public void onClick(View v) {
+            exibeData();
+        }
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus)
+            exibeData();
+        }
+
+    }
+
+    private class SelecionaDataListener implements DatePickerDialog.OnDateSetListener
+    {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
+        {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, monthOfYear, dayOfMonth);
+
+            Date data = calendar.getTime();
+
+
+            DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT);
+            String dt = format.format(data);
+
+            edtDatasEspeciais.setText(dt);
+
+            contato.setDataEspecial(data);
+
+        }
+
+
+    }
+
+
 }
+
+
+
+
+
