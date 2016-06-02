@@ -11,7 +11,7 @@ public class ScriptSQL {
         sqlbuilder.append(" CREATE TABLE IF NOT EXISTS CONTATO ( ");
         sqlbuilder.append(" _id                INTEGER       NOT NULL ");
         sqlbuilder.append("PRIMARY KEY AUTOINCREMENT, ");
-        sqlbuilder.append(" NOME                 VARCHAR(200), ");
+        sqlbuilder.append(" NOME               VARCHAR (200), ");
         sqlbuilder.append(" TELEFONE           VARCHAR (14), ");
         sqlbuilder.append(" TIPOTELEFONE       VARCHAR (1), ");
         sqlbuilder.append(" EMAIL              VARCHAR (255), ");

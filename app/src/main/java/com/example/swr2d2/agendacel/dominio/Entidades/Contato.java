@@ -1,8 +1,9 @@
 package com.example.swr2d2.agendacel.dominio.Entidades;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Contato {
+public class Contato implements Serializable{
     private long id;
     private String nome;
     private String telefone;
@@ -11,8 +12,8 @@ public class Contato {
     private String tipoEmail;
     private String endereco;
     private String tipoEndereco;
-    private Date dataEspecial;
-    private String tipoDataEspecial;
+    private Date datasEspeciais;
+    private String tipoDatasEspeciais;
     private String grupo;
 
     public Contato() {
@@ -83,20 +84,20 @@ public class Contato {
         this.tipoEndereco = tipoEndereco;
     }
 
-    public Date getDataEspecial() {
-        return dataEspecial;
+    public Date getDatasEspeciais() {
+        return datasEspeciais;
     }
 
-    public void setDataEspecial(Date dataEspecial) {
-        this.dataEspecial = dataEspecial;
+    public void setDatasEspeciais(Date dataEspecial) {
+        this.datasEspeciais = dataEspecial;
     }
 
-    public String getTipoDataEspecial() {
-        return tipoDataEspecial;
+    public String getTipoDatasEspeciais() {
+        return tipoDatasEspeciais;
     }
 
-    public void setTipoDataEspecial(String tipoDataEspecial) {
-        this.tipoDataEspecial = tipoDataEspecial;
+    public void setTipoDatasEspeciais(String tipoDataEspeciais) {
+        this.tipoDatasEspeciais = tipoDatasEspeciais;
     }
 
     public String getGrupo() {

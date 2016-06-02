@@ -16,7 +16,7 @@ import com.example.swr2d2.agendacel.dominio.Entidades.Contato;
 import com.example.swr2d2.agendacel.dominio.RepositorioContato;
 
 
-public class ActContato extends AppCompatActivity implements View.OnClickListener{
+public class ActContato extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener{
 
     private ImageButton btnAdcionar;
     private EditText edtPesquisa;
@@ -60,6 +60,22 @@ public class ActContato extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         Intent it = new Intent(this, ActCadContatos.class);
-        startActivity(it);
+        startActivityForResult(it, 0);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        adpContato = repositorioContato.BuscaContatos(this);
+
+        lstContatos.setAdapter(adpContato);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Contato contato = adpContato.getItem(position);
+
+        Intent it = new Intent(this, ActCadContatos.class);
+
+        it.putExtra("CONTATO", contato);
+        startActivityForResult(it, 0);
     }
 }

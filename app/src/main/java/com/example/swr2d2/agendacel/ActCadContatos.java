@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.GpsStatus;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -61,7 +60,7 @@ public class ActCadContatos extends AppCompatActivity {
         spnTipoEmail = (Spinner) findViewById(R.id.spnTipoEmail);
         spnTipoTelefone = (Spinner) findViewById(R.id.spnTipoTelefone);
         spnTipoEndereco = (Spinner) findViewById(R.id.spnTipoEndereco);
-        spnTipoDatasEspeciais = (Spinner) findViewById(R.id.spnTipoDatasEspeciais);
+        spnTipoDatasEspeciais = (Spinner) findViewById(R.id.spnTipoDataEspeciais);
 
         adpTipoEmail = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
         adpTipoEmail.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -151,8 +150,6 @@ public class ActCadContatos extends AppCompatActivity {
 
         try {
 
-
-
             contato.setNome(edtNome.getText().toString());
             contato.setTelefone(edtTelefone.getText().toString());
             contato.setEmail(edtEmail.getText().toString());
@@ -164,7 +161,7 @@ public class ActCadContatos extends AppCompatActivity {
             contato.setTipoTelefone(String.valueOf(spnTipoTelefone.getSelectedItemPosition()) );
             contato.setTipoEmail(String.valueOf(spnTipoEmail.getSelectedItemPosition()) );
             contato.setTipoEndereco(String.valueOf(spnTipoEndereco.getSelectedItemPosition()) );
-            contato.setTipoDataEspecial(String.valueOf(spnTipoDatasEspeciais.getSelectedItemPosition()) );
+            contato.setTipoDatasEspeciais(String.valueOf(spnTipoDatasEspeciais.getSelectedItemPosition()) );
 
             repositorioContato.inserir(contato);
 
@@ -213,13 +210,12 @@ public class ActCadContatos extends AppCompatActivity {
 
             Date data = calendar.getTime();
 
-
             DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT);
             String dt = format.format(data);
 
             edtDatasEspeciais.setText(dt);
 
-            contato.setDataEspecial(data);
+            contato.setDatasEspeciais(data);
 
         }
 

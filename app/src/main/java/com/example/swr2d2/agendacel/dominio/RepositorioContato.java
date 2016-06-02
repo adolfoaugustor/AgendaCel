@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.widget.ArrayAdapter;
 
 import com.example.swr2d2.agendacel.ActContato;
+import com.example.swr2d2.agendacel.ActCadContatos;
 import com.example.swr2d2.agendacel.dominio.Entidades.Contato;
 
 import java.util.Date;
@@ -25,8 +26,8 @@ public class RepositorioContato {
         values.put("TIPOEMAIL", contato.getTipoEmail());
         values.put("ENDERECO", contato.getEndereco());
         values.put("TIPOENDERECO", contato.getTipoEndereco());
-        values.put("DATASESPECIAIS", contato.getDataEspecial().getTime());
-        values.put("TIPODATASESPECIAIS", contato.getTipoDataEspecial());
+        values.put("DATASESPECIAIS", contato.getDatasEspeciais().getTime());
+        values.put("TIPODATASESPECIAIS", contato.getTipoDatasEspeciais());
         values.put("GRUPOS", contato.getGrupo());
 
         conn.insertOrThrow("CONTATO", null, values);
@@ -38,10 +39,10 @@ public class RepositorioContato {
 
     public ArrayAdapter<Contato> BuscaContatos(Context context) {
         ArrayAdapter<Contato> adpContato = new ArrayAdapter<Contato>(context, android.R.layout.simple_list_item_1);
-        ///Cursor Responsavel por armazenar os registros da consulta
         Cursor cursor = conn.query("CONTATO", null, null, null, null, null, null);
 
-        if (cursor.getCount() > 0) {
+        if (cursor.getCount() > 0)
+        {
             cursor.moveToFirst();
 
             do {
@@ -54,8 +55,8 @@ public class RepositorioContato {
                 contato.setTipoEmail(cursor.getString(5));
                 contato.setEndereco(cursor.getString(6));
                 contato.setTipoEndereco(cursor.getString(7));
-                contato.setDataEspecial(new Date(cursor.getLong(8)));
-                contato.setTipoDataEspecial(cursor.getString(9));
+                contato.setDatasEspeciais(new Date(cursor.getLong(8)));
+                contato.setTipoDatasEspeciais(cursor.getString(9));
                 contato.setGrupo(cursor.getString(10));
                 adpContato.add(contato);
 
