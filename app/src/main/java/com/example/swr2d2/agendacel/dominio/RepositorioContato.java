@@ -26,7 +26,9 @@ public class RepositorioContato {
         values.put("TIPOEMAIL", contato.getTipoEmail());
         values.put("ENDERECO", contato.getEndereco());
         values.put("TIPOENDERECO", contato.getTipoEndereco());
-        values.put("DATASESPECIAIS", contato.getDatasEspeciais().getTime());
+        if(contato.getDatasEspeciais()!=null) {
+            values.put("DATASESPECIAIS", contato.getDatasEspeciais().getTime());
+        }
         values.put("TIPODATASESPECIAIS", contato.getTipoDatasEspeciais());
         values.put("GRUPOS", contato.getGrupo());
 

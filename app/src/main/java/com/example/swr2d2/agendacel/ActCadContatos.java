@@ -133,7 +133,7 @@ public class ActCadContatos extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.mne_acao1:
-                if (contato == null)
+                if (contato != null)
                     inserir();
                 finish();
 
