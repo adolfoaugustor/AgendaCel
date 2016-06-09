@@ -4,9 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.ArrayAdapter;
+import android.widget.*;
+import com.example.swr2d2.agendacel.R;
 
-import com.example.swr2d2.agendacel.ActContato;
+import com.example.swr2d2.agendacel.ContatoArrayAdapter;
 import com.example.swr2d2.agendacel.dominio.Entidades.Contato;
 
 import java.util.Date;
@@ -58,8 +59,8 @@ public class RepositorioContato {
 
     }
 
-    public ArrayAdapter<Contato> BuscaContatos(Context context) {
-        ArrayAdapter<Contato> adpContato = new ArrayAdapter<Contato>(context, android.R.layout.simple_list_item_1);
+    public ContatoArrayAdapter BuscaContatos(Context context) {
+        ContatoArrayAdapter adpContato = new ContatoArrayAdapter(context, R.layout.linha_contatos);
         ///Cursor Responsavel por armazenar os registros da consulta
         Cursor cursor = conn.query(Contato.TABELA, null, null, null, null, null, null);
 

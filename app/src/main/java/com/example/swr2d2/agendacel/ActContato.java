@@ -4,6 +4,8 @@ package com.example.swr2d2.agendacel;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.*;
 import android.widget.*;
 import android.content.*;
@@ -52,6 +54,9 @@ public class ActContato extends AppCompatActivity implements View.OnClickListene
 
             lstContatos.setAdapter(adpContato);
 
+            FiltraDados filtraDados = new FiltraDados(adpContato);
+            edtPesquisa.addTextChangedListener(filtraDados);
+
         }catch(SQLException ex)
         {
             MessageBox.show(this, "Erro", "Erro ao criar o banco: " + ex.getMessage() );
@@ -76,4 +81,32 @@ public class ActContato extends AppCompatActivity implements View.OnClickListene
 
         startActivityForResult(it, 0);
     }
+
+    private class FiltraDados implements TextWatcher
+    {
+
+        private ArrayAdapter<Contato> arrayAdapter;
+
+        private FiltraDados(ArrayAdapter<Contato> arrayAdapter)
+        {
+            this.arrayAdapter = arrayAdapter;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            arrayAdapter.getFilter().filter(s);
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    }
+
 }
+

@@ -23,7 +23,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ActCadContatos extends AppCompatActivity {
+public class ActCadContatos extends AppCompatActivity{
 
     private EditText edtNome;
     private EditText edtEmail;
@@ -153,18 +153,17 @@ public class ActCadContatos extends AppCompatActivity {
 
             switch (item.getItemId()) {
 
-                case R.id.mni_acao1:
+                case R.id.mne_acao1:
                     salvar();
                     finish();
 
                     break;
-                case R.id.mni_acao2:
+                case R.id.mne_acao2:
                     excluir();
                     finish();
 
                     break;
             }
-
             return super.onOptionsItemSelected(item);
         }
 
