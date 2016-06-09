@@ -10,12 +10,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.*;
 
+import com.example.swr2d2.agendacel.app.MessageBox;
+import com.example.swr2d2.agendacel.app.ViewHelper;
 import com.example.swr2d2.agendacel.database.DataBase;
 import com.example.swr2d2.agendacel.dominio.Entidades.Contato;
 import com.example.swr2d2.agendacel.dominio.RepositorioContato;
+import com.example.swr2d2.agendacel.util.DateUtils;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -62,22 +64,27 @@ public class ActCadContatos extends AppCompatActivity {
         spnTipoEndereco = (Spinner) findViewById(R.id.spnTipoEndereco);
         spnTipoDatasEspeciais = (Spinner) findViewById(R.id.spnTipoDataEspeciais);
 
-        adpTipoEmail = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
-        adpTipoEmail.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adpTipoEmail          = ViewHelper.createArrayAdapter(this, spnTipoEmail);
+        adpTipoTelefone       = ViewHelper.createArrayAdapter(this, spnTipoTelefone);
+        adpTipoEndereco       = ViewHelper.createArrayAdapter(this, spnTipoEndereco);
+        adpTipoDatasEspeciais = ViewHelper.createArrayAdapter(this, spnTipoDatasEspeciais);
 
-        adpTipoTelefone = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
-        adpTipoTelefone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        adpTipoEmail = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+//        adpTipoEmail.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//        adpTipoTelefone = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+//        adpTipoTelefone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//        adpTipoEndereco = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+//        adpTipoEndereco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//        adpTipoDatasEspeciais = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+//        adpTipoDatasEspeciais.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        adpTipoEndereco = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
-        adpTipoEndereco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        adpTipoDatasEspeciais = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
-        adpTipoDatasEspeciais.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spnTipoEmail.setAdapter(adpTipoEmail);
-        spnTipoTelefone.setAdapter(adpTipoTelefone);
-        spnTipoEndereco.setAdapter(adpTipoEndereco);
-        spnTipoDatasEspeciais.setAdapter(adpTipoDatasEspeciais);
+//        spnTipoEmail.setAdapter(adpTipoEmail);
+//        spnTipoTelefone.setAdapter(adpTipoTelefone);
+//        spnTipoEndereco.setAdapter(adpTipoEndereco);
+//        spnTipoDatasEspeciais.setAdapter(adpTipoDatasEspeciais);
 
         adpTipoEmail.add("Casa");
         adpTipoEmail.add("Trabalho");
@@ -104,9 +111,18 @@ public class ActCadContatos extends AppCompatActivity {
 
         edtDatasEspeciais.setOnClickListener( listener );
         edtDatasEspeciais.setOnFocusChangeListener( listener );
-        contato = new Contato();
 
-        try{
+        Bundle bundle = getIntent().getExtras();
+
+        if ((bundle != null) && (bundle.containsKey(ActContato.PAR_CONTATO) ) )
+        {
+            contato = (Contato)bundle.getSerializable(ActContato.PAR_CONTATO);
+            preencheDados();
+        }
+        else
+            contato = new Contato();
+
+        try {
             dataBase = new DataBase(this);
             conn = dataBase.getWritableDatabase();
 
@@ -120,60 +136,101 @@ public class ActCadContatos extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_act_cad_contatos, menu);
+        @Override
+        public boolean onCreateOptionsMenu(Menu menu){
 
-        return super.onCreateOptionsMenu(menu);
-    }
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_act_cad_contatos, menu);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+            if (contato.getId() != 0)
+                menu.getItem(1).setVisible(true);
 
-        switch (item.getItemId()) {
-            case R.id.mne_acao1:
-                if (contato != null)
-                    inserir();
-                finish();
-
-                break;
-            case R.id.mne_acao2:
-
-                break;
+            return super.onCreateOptionsMenu(menu);
         }
 
-        return super.onOptionsItemSelected(item);
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+
+            switch (item.getItemId()) {
+
+                case R.id.mni_acao1:
+                    salvar();
+                    finish();
+
+                    break;
+                case R.id.mni_acao2:
+                    excluir();
+                    finish();
+
+                    break;
+            }
+
+            return super.onOptionsItemSelected(item);
+        }
+
+    private void preencheDados()
+    {
+        edtNome.setText( contato.getNome() );
+        edtTelefone.setText( contato.getTelefone() );
+        spnTipoTelefone.setSelection(  Integer.parseInt(contato.getTipoTelefone()) );
+        edtEmail.setText( contato.getEmail() );
+        spnTipoEmail.setSelection(  Integer.parseInt(contato.getTipoEmail()) );
+        edtEndereco.setText( contato.getEndereco() );
+        spnTipoEndereco.setSelection(  Integer.parseInt(contato.getTipoEndereco()) );
+
+        DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT);
+        String dt = format.format( contato.getDatasEspeciais() );
+
+        edtDatasEspeciais.setText( dt );
+        spnTipoDatasEspeciais.setSelection(  Integer.parseInt(contato.getTipoDatasEspeciais() ) );
+
+        edtGrupos.setText( contato.getGrupos() );
+
     }
 
-    private void inserir() {
+    private void excluir()
+    {
+        try
+        {
+            repositorioContato.excluir( contato.getId() );
 
-        try {
+        }catch(Exception ex)
+        {
+            MessageBox.show(this, "Erro", "Erro ao excluir os dados: " + ex.getMessage());
+        }
+
+    }
+
+    private void salvar()
+    {
+
+        try
+        {
 
             contato.setNome(edtNome.getText().toString());
             contato.setTelefone(edtTelefone.getText().toString());
             contato.setEmail(edtEmail.getText().toString());
             contato.setEndereco(edtEndereco.getText().toString());
 
-            contato.setGrupo(edtGrupos.getText().toString());
+            contato.setGrupos(edtGrupos.getText().toString());
 
+            contato.setTipoTelefone( String.valueOf(spnTipoTelefone.getSelectedItemPosition()) );
+            contato.setTipoEmail(String.valueOf(spnTipoEmail.getSelectedItemPosition()));
+            contato.setTipoEndereco(String.valueOf(spnTipoEndereco.getSelectedItemPosition()));
+            contato.setTipoDatasEspeciais( String.valueOf(spnTipoDatasEspeciais.getSelectedItemPosition()) );
 
-            contato.setTipoTelefone(String.valueOf(spnTipoTelefone.getSelectedItemPosition()) );
-            contato.setTipoEmail(String.valueOf(spnTipoEmail.getSelectedItemPosition()) );
-            contato.setTipoEndereco(String.valueOf(spnTipoEndereco.getSelectedItemPosition()) );
-            contato.setTipoDatasEspeciais(String.valueOf(spnTipoDatasEspeciais.getSelectedItemPosition()) );
+            if (contato.getId() == 0)
+                repositorioContato.inserir(contato);
+            else
+                repositorioContato.alterar(contato);
 
-            repositorioContato.inserir(contato);
-
-        } catch (Exception ex) {
-
-            AlertDialog.Builder dlg = new AlertDialog.Builder(this);
-            dlg.setMessage("Erro ao inserir os dados " + ex.getMessage());
-            dlg.setNeutralButton("OK", null);
-            dlg.show();
-
+        }catch(Exception ex)
+        {
+            MessageBox.show(this, "Erro", "Erro ao salvar os dados: " + ex.getMessage());
         }
+
     }
+
     private void exibeData(){
         Calendar calendar = Calendar.getInstance();
         int ano = calendar.get(calendar.YEAR);
@@ -195,7 +252,7 @@ public class ActCadContatos extends AppCompatActivity {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if (hasFocus)
-            exibeData();
+                exibeData();
         }
 
     }
@@ -203,15 +260,10 @@ public class ActCadContatos extends AppCompatActivity {
     private class SelecionaDataListener implements DatePickerDialog.OnDateSetListener
     {
         @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
-        {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(year, monthOfYear, dayOfMonth);
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-            Date data = calendar.getTime();
-
-            DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT);
-            String dt = format.format(data);
+            String dt = DateUtils.dateToString(year, monthOfYear, dayOfMonth);
+            Date data = DateUtils.getDate(year, monthOfYear, dayOfMonth);
 
             edtDatasEspeciais.setText(dt);
 
@@ -219,13 +271,5 @@ public class ActCadContatos extends AppCompatActivity {
 
         }
 
-
     }
-
-
 }
-
-
-
-
-

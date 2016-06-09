@@ -11,6 +11,7 @@ import android.content.*;
 import android.database.sqlite.*;
 import android.database.*;
 
+import com.example.swr2d2.agendacel.app.MessageBox;
 import com.example.swr2d2.agendacel.database.DataBase;
 import com.example.swr2d2.agendacel.dominio.Entidades.Contato;
 import com.example.swr2d2.agendacel.dominio.RepositorioContato;
@@ -27,16 +28,19 @@ public class ActContato extends AppCompatActivity implements View.OnClickListene
     private SQLiteDatabase conn;
     private RepositorioContato repositorioContato;
 
+    public static final String PAR_CONTATO = "CONTATO";
+
     @Override
     protected void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
         setContentView(R.layout.act_contato);
 
         btnAdcionar = (ImageButton)findViewById(R.id.btnAdicionar);
-        edtPesquisa = (EditText) findViewById(R.id.edtPesquisa);
-        lstContatos = (ListView) findViewById(R.id.lstContatos);
+        edtPesquisa = (EditText)findViewById(R.id.edtPesquisa);
+        lstContatos = (ListView)findViewById(R.id.lstContatos);
 
         btnAdcionar.setOnClickListener(this);
+        lstContatos.setOnItemClickListener(this);
 
         try{
             dataBase = new DataBase(this);
@@ -48,11 +52,9 @@ public class ActContato extends AppCompatActivity implements View.OnClickListene
 
             lstContatos.setAdapter(adpContato);
 
-        }catch (SQLException ex){
-            AlertDialog.Builder dlg = new AlertDialog.Builder(this);
-            dlg.setMessage("Erro ao criar Banco!" + ex.getMessage() );
-            dlg.setNeutralButton("Ok!", null);
-            dlg.show();
+        }catch(SQLException ex)
+        {
+            MessageBox.show(this, "Erro", "Erro ao criar o banco: " + ex.getMessage() );
         }
 
     }
@@ -60,22 +62,18 @@ public class ActContato extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         Intent it = new Intent(this, ActCadContatos.class);
-        startActivityForResult(it, 0);
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        adpContato = repositorioContato.BuscaContatos(this);
-
-        lstContatos.setAdapter(adpContato);
+        startActivity(it);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
         Contato contato = adpContato.getItem(position);
 
         Intent it = new Intent(this, ActCadContatos.class);
 
-        it.putExtra("CONTATO", contato);
+        it.putExtra(PAR_CONTATO, contato);
+
         startActivityForResult(it, 0);
     }
 }
