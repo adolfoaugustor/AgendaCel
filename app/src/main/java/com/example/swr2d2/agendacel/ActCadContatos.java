@@ -111,6 +111,7 @@ public class ActCadContatos extends AppCompatActivity{
 
         edtDatasEspeciais.setOnClickListener( listener );
         edtDatasEspeciais.setOnFocusChangeListener( listener );
+        edtDatasEspeciais.setKeyListener(null);
 
         Bundle bundle = getIntent().getExtras();
 
@@ -136,36 +137,43 @@ public class ActCadContatos extends AppCompatActivity{
         }
     }
 
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu){
-
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.menu_act_cad_contatos, menu);
-
-            if (contato.getId() != 0)
-                menu.getItem(1).setVisible(true);
-
-            return super.onCreateOptionsMenu(menu);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (conn != null){
+            conn.close();
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_act_cad_contatos, menu);
 
-            switch (item.getItemId()) {
+        if (contato.getId() != 0)
+            menu.getItem(1).setVisible(true);
 
-                case R.id.mne_acao1:
-                    salvar();
-                    finish();
+        return super.onCreateOptionsMenu(menu);
+    }
 
-                    break;
-                case R.id.mne_acao2:
-                    excluir();
-                    finish();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-                    break;
-            }
-            return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+
+            case R.id.mne_acao1:
+                salvar();
+                finish();
+
+                break;
+            case R.id.mne_acao2:
+                excluir();
+                finish();
+
+                break;
         }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void preencheDados()
     {

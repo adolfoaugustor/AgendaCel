@@ -29,6 +29,7 @@ public class ActContato extends AppCompatActivity implements View.OnClickListene
     private DataBase dataBase;
     private SQLiteDatabase conn;
     private RepositorioContato repositorioContato;
+    private FiltraDados filtraDados;
 
     public static final String PAR_CONTATO = "CONTATO";
 
@@ -47,14 +48,13 @@ public class ActContato extends AppCompatActivity implements View.OnClickListene
         try{
             dataBase = new DataBase(this);
             conn = dataBase.getWritableDatabase();
-
             repositorioContato = new RepositorioContato(conn);
 
             adpContato = repositorioContato.BuscaContatos(this);
 
             lstContatos.setAdapter(adpContato);
 
-            FiltraDados filtraDados = new FiltraDados(adpContato);
+            filtraDados = new FiltraDados(adpContato);
             edtPesquisa.addTextChangedListener(filtraDados);
 
         }catch(SQLException ex)
@@ -65,9 +65,25 @@ public class ActContato extends AppCompatActivity implements View.OnClickListene
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (conn != null){
+            conn.close();
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         Intent it = new Intent(this, ActCadContatos.class);
-        startActivity(it);
+        startActivityForResult(it, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        adpContato = repositorioContato.BuscaContatos(this);
+        filtraDados.setArrayAdapter(adpContato);
+
+        lstContatos.setAdapter(adpContato);
     }
 
     @Override
@@ -88,6 +104,11 @@ public class ActContato extends AppCompatActivity implements View.OnClickListene
         private ArrayAdapter<Contato> arrayAdapter;
 
         private FiltraDados(ArrayAdapter<Contato> arrayAdapter)
+        {
+            this.arrayAdapter = arrayAdapter;
+        }
+
+        public void setArrayAdapter(ArrayAdapter<Contato> arrayAdapter)
         {
             this.arrayAdapter = arrayAdapter;
         }

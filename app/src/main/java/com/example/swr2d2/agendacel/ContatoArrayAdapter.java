@@ -57,13 +57,13 @@ public class ContatoArrayAdapter extends ArrayAdapter<Contato>{
 
         Contato contato = getItem(position);
 
-//        if (contato.getNome().toUpperCase().startsWith("A") )
-//            viewHolder.txtCor.setBackgroundColor( context.getResources().getColor(R.color .azul) );
-//        else
-//        if (contato.getNome().toUpperCase().startsWith("B"))
-//            viewHolder.txtCor.setBackgroundColor(context.getResources().getColor(R.color.vermelho));
-//        else
-//            viewHolder.txtCor.setBackgroundColor(context.getResources().getColor(R.color.color1));
+        if (contato.getNome().toUpperCase().startsWith("A") )
+            viewHolder.txtCor.setBackgroundColor( context.getResources().getColor(R.color .azul) );
+        else
+        if (contato.getNome().toUpperCase().startsWith("B"))
+            viewHolder.txtCor.setBackgroundColor(context.getResources().getColor(R.color.vermelho));
+        else
+            viewHolder.txtCor.setBackgroundColor(context.getResources().getColor(R.color.cinza));
 
         viewHolder.txtNome.setText(contato.getNome());
         viewHolder.txtTelefone.setText(contato.getTelefone());
